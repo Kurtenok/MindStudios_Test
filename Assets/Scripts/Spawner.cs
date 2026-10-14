@@ -1,11 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class Spawner : MonoBehaviour
 {
+    [Header("Spawn options")]
     [SerializeField] List<GameObject> SpawnPoints = new List<GameObject>();
     [SerializeField] List<Wave> Waves = new List<Wave>();
+
+    [Header(" UI")]
+
+    [SerializeField] TextMeshProUGUI CurrentWaveText;
+    [SerializeField] TextMeshProUGUI EnemiesLeftText;
 
     [System.Serializable]
     struct Wave
@@ -42,11 +49,13 @@ public class Spawner : MonoBehaviour
         {
             List<EnemyToSpawn> enemiesInWave = Waves[currentWave - 1].wave;
 
+            UpdateCurrentWaveUI();
+
             foreach (EnemyToSpawn enemyToSpawn in enemiesInWave)
             {
                 if(enemyToSpawn.enemy==null || enemyToSpawn.count==0)
                 continue;
-                
+
                 for (int i = 0; i < enemyToSpawn.count; ++i)
                 {
                     GameObject spawnedEnemy = Instantiate(
@@ -69,6 +78,8 @@ public class Spawner : MonoBehaviour
                 }
             }
 
+            UpdateEnemiesLeftUI();
+
             yield return new WaitUntil(() => SpawnedEnemies.Count == 0);
 
             if (currentWave == Waves.Count)
@@ -84,6 +95,8 @@ public class Spawner : MonoBehaviour
     {
         enemy.Died -= OnEnemyDied;
         SpawnedEnemies.Remove(enemy);
+
+        UpdateEnemiesLeftUI();
     }
 
     private void OnDestroy()
@@ -95,4 +108,27 @@ public class Spawner : MonoBehaviour
 
         SpawnedEnemies.Clear();
     }
+
+    private void UpdateCurrentWaveUI()
+    {
+        if(CurrentWaveText == null)
+        {
+            Debug.LogError($"Assing CurrentWaveText in {gameObject.name}");
+            return;
+        }
+
+        CurrentWaveText.text = $"Wave : {currentWave}";
+        
+    } 
+
+    private void UpdateEnemiesLeftUI()
+    {
+        if(EnemiesLeftText == null)
+        {
+            Debug.LogError($"Assing CurrentWaveText in {gameObject.name}");
+            return;
+        }
+
+        EnemiesLeftText.text = $"Enemies Left : {SpawnedEnemies.Count}";
+    } 
 }
