@@ -763,18 +763,23 @@ MonoBehaviour:
   - wave:
     - enemy: {fileID: 5604392665776495563, guid: 6bda082574d26e9409de244d347ea63f, type: 3}
       count: 4
+      spawnInterval: 1
     nextWaveDelay: 2
   - wave:
     - enemy: {fileID: 5604392665776495563, guid: 6bda082574d26e9409de244d347ea63f, type: 3}
       count: 3
+      spawnInterval: 0.6
     - enemy: {fileID: 1935172531336687512, guid: c9d2877edb69d2f4782d33b4f18af6f0, type: 3}
       count: 3
+      spawnInterval: 1
     nextWaveDelay: 2
   - wave:
     - enemy: {fileID: 542721318313145090, guid: df1eb5ddd1653794ab4f7a4efaa8331e, type: 3}
       count: 2
+      spawnInterval: 1
     - enemy: {fileID: 1935172531336687512, guid: c9d2877edb69d2f4782d33b4f18af6f0, type: 3}
       count: 6
+      spawnInterval: 0.4
     nextWaveDelay: 0
   CurrentWaveText: {fileID: 1417176485}
   EnemiesLeftText: {fileID: 1872733497}

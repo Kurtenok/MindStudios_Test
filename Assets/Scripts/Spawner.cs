@@ -9,8 +9,7 @@ public class Spawner : MonoBehaviour
     [SerializeField] List<GameObject> SpawnPoints = new List<GameObject>();
     [SerializeField] List<Wave> Waves = new List<Wave>();
 
-    [Header(" UI")]
-
+    [Header("UI")]
     [SerializeField] TextMeshProUGUI CurrentWaveText;
     [SerializeField] TextMeshProUGUI EnemiesLeftText;
 
@@ -26,6 +25,7 @@ public class Spawner : MonoBehaviour
     {
         public GameObject enemy;
         public int count;
+        public float spawnInterval;
     }
 
     int currentWave = 1;
@@ -53,7 +53,7 @@ public class Spawner : MonoBehaviour
 
             foreach (EnemyToSpawn enemyToSpawn in enemiesInWave)
             {
-                if(enemyToSpawn.enemy==null || enemyToSpawn.count==0)
+                if (enemyToSpawn.enemy == null || enemyToSpawn.count <= 0)
                 continue;
 
                 for (int i = 0; i < enemyToSpawn.count; ++i)
@@ -75,10 +75,13 @@ public class Spawner : MonoBehaviour
 
                     deathNotifier.Died += OnEnemyDied;
                     SpawnedEnemies.Add(deathNotifier);
+
+                    UpdateEnemiesLeftUI();
+
+                    if (i < enemyToSpawn.count - 1 && enemyToSpawn.spawnInterval > 0)
+                        yield return new WaitForSeconds(enemyToSpawn.spawnInterval);
                 }
             }
-
-            UpdateEnemiesLeftUI();
 
             yield return new WaitUntil(() => SpawnedEnemies.Count == 0);
 
@@ -111,24 +114,23 @@ public class Spawner : MonoBehaviour
 
     private void UpdateCurrentWaveUI()
     {
-        if(CurrentWaveText == null)
+        if (CurrentWaveText == null)
         {
-            Debug.LogError($"Assing CurrentWaveText in {gameObject.name}");
+            Debug.LogError($"Assign CurrentWaveText in {gameObject.name}");
             return;
         }
 
         CurrentWaveText.text = $"Wave : {currentWave}";
-        
-    } 
+    }
 
     private void UpdateEnemiesLeftUI()
     {
-        if(EnemiesLeftText == null)
+        if (EnemiesLeftText == null)
         {
-            Debug.LogError($"Assing CurrentWaveText in {gameObject.name}");
+            Debug.LogError($"Assign EnemiesLeftText in {gameObject.name}");
             return;
         }
 
-        EnemiesLeftText.text = $"Enemies Left : {SpawnedEnemies.Count}";
-    } 
+        EnemiesLeftText.text = $"Enemies : {SpawnedEnemies.Count}";
+    }
 }
