@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -28,9 +29,11 @@ public class Spawner : MonoBehaviour
         public float spawnInterval;
     }
 
-    int currentWave = 1;
+    public Action AllWavesCompleted;
 
-    HashSet<IEnemyDeathNotifier> SpawnedEnemies = new HashSet<IEnemyDeathNotifier>();
+    private int currentWave = 1;
+
+    private HashSet<IEnemyDeathNotifier> SpawnedEnemies = new HashSet<IEnemyDeathNotifier>();
 
     private void Start()
     {
@@ -60,7 +63,7 @@ public class Spawner : MonoBehaviour
                 {
                     GameObject spawnedEnemy = Instantiate(
                         enemyToSpawn.enemy,
-                        SpawnPoints[Random.Range(0, SpawnPoints.Count)].transform.position,
+                        SpawnPoints[UnityEngine.Random.Range(0, SpawnPoints.Count)].transform.position,
                         Quaternion.identity
                     );
 
@@ -86,7 +89,10 @@ public class Spawner : MonoBehaviour
             yield return new WaitUntil(() => SpawnedEnemies.Count == 0);
 
             if (currentWave == Waves.Count)
+            {
+                AllWavesCompleted?.Invoke();
                 yield break;
+            }
 
             yield return new WaitForSeconds(Mathf.Max(0, Waves[currentWave - 1].nextWaveDelay));
 
@@ -132,5 +138,14 @@ public class Spawner : MonoBehaviour
         }
 
         EnemiesLeftText.text = $"Enemies : {SpawnedEnemies.Count}";
+    }
+
+    public void HideAllUI()
+    {
+        if(EnemiesLeftText)
+        EnemiesLeftText.gameObject.SetActive(false);
+
+        if(CurrentWaveText)
+        CurrentWaveText.gameObject.SetActive(false);
     }
 }
